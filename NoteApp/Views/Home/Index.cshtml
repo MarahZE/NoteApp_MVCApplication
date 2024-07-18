@@ -5,3 +5,30 @@
 <div class="text-center">
     <h1 class="display-4">Welcome To Note App</h1>
 </div>
+
+
+<div>
+    <h2>Login</h2>
+    @model Account
+    <form asp-action="LogIn" id="form-action" method="post" role="form">
+        <div asp-validation-summary="All"></div>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" asp-for="Email" class="form-control" required>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" asp-for="Password" class="form-control" required>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </form>
+</div>
+
+
+<div class="alert alert-info mt-3">
+    <p>Don't have an account? <a asp-action="SignIn">Sign up here</a>.</p>
+</div>
