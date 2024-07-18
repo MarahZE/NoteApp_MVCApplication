@@ -9,6 +9,8 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
 
+    private string userEmail;
+
     public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
@@ -26,19 +28,29 @@ public class HomeController : Controller
 
     public IActionResult Home()
     {
-        return View();
+        if (HttpContext.Session.GetString("IsLogged") == "true")
+        {
+            return View();
+        }
+        else
+        {
+            return RedirectToAction("Index");
+        }
+
     }
 
     [HttpPost]
     public IActionResult Insert(Note note)
     {
+
         using (SqliteConnection con =
                 new SqliteConnection("Data Source=db.sqlite"))
         {
             using (var tableCmd = con.CreateCommand())
             {
                 con.Open();
-                tableCmd.CommandText = $"INSERT INTO Note (Title , Text) VALUES (@title, @text)";
+                tableCmd.CommandText = $"INSERT INTO Notes (Email ,Title , Text) VALUES (@email, @title, @text)";
+                tableCmd.Parameters.AddWithValue("@email", HttpContext.Session.GetString("UserEmail"));
                 tableCmd.Parameters.AddWithValue("@title", note.Title);
                 tableCmd.Parameters.AddWithValue("@text", note.Text);
                 try
@@ -51,7 +63,7 @@ public class HomeController : Controller
                 }
             }
         }
-        return RedirectToAction("Index");
+        return RedirectToAction("Home");
 
     }
 
@@ -93,17 +105,19 @@ public class HomeController : Controller
                 tableCmd.CommandText = $"SELECT * FROM Account WHERE Email = @Email AND Password = @Password";
                 tableCmd.Parameters.AddWithValue("@Email", account.Email);
                 tableCmd.Parameters.AddWithValue("@Password", account.Password);
+
                 using (var reader = tableCmd.ExecuteReader())
 
                 {
                     if (reader != null && reader.HasRows)
                     {
+                        HttpContext.Session.SetString("IsLogged", "true");
+                        HttpContext.Session.SetString("UserEmail", account.Email);
                         return RedirectToAction("Home");
                     }
                     else
                     {
                         // Authentication failed
-                        //ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                         return RedirectToAction("Index"); // Return to the login view with the provided account details and error message
                     }
 
@@ -112,6 +126,13 @@ public class HomeController : Controller
             }
         }
 
+    }
+
+
+    public IActionResult LogOut()
+    {
+        HttpContext.Session.Clear(); // Förstör sessionen
+        return RedirectToAction("Index");
     }
 }
 
