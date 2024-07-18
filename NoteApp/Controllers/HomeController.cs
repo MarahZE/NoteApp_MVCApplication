@@ -19,6 +19,16 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult SingIn()
+    {
+        return View();
+    }
+
+    public IActionResult Home()
+    {
+        return View();
+    }
+
     [HttpPost]
     public IActionResult Insert(Note note)
     {
