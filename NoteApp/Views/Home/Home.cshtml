@@ -38,6 +38,7 @@
                 <th>Id</th>
                 <th>Title</th>
                 <th>Text</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -46,7 +47,12 @@
                 <tr>
                     <td>@note.Id</td>
                     <td>@note.Title</td>
-                    <td>@note.Text</td>
+                    <td>@note.Text
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" asp-for="Note.Id" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             }
         </tbody>

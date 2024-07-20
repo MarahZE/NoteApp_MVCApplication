@@ -135,4 +135,78 @@ public class HomeController : Controller
 
     public IActionResult LogOut()
     {
-        HttpContext
+        HttpContext.Session.Clear(); // Förstör sessionen
+        return RedirectToAction("Index");
+    }
+
+    internal NoteViewModel GetNoteByUser()
+    {
+        List<Note> notes = new();
+
+        try
+        {
+            using (SqliteConnection con = new SqliteConnection("Data Source=db.sqlite"))
+            {
+                using (var tableCmd = con.CreateCommand())
+                {
+                    con.Open();
+                    tableCmd.CommandText = $"SELECT * FROM Notes WHERE Email = @Email";
+
+                    tableCmd.Parameters.AddWithValue("@Email", HttpContext.Session.GetString("UserEmail"));
+
+                    using (var reader = tableCmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                notes.Add(new Note
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Email = reader.GetString(1),
+                                    Title = reader.GetString(2),
+                                    Text = reader.GetString(3)
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Hantera undantag (t.ex. logga felet)
+            Console.WriteLine(ex.Message);
+        }
+
+        return new NoteViewModel
+        {
+            Notes = notes
+        };
+    }
+
+
+    public IActionResult Delete(Note note)
+    {
+
+        using (SqliteConnection con = new SqliteConnection("Data Source=db.sqlite"))
+        {
+            con.Open();
+            using (var tableCmd = con.CreateCommand())
+            {
+                tableCmd.CommandText = $"DELETE FROM Notes WHERE Id = @Id";
+                tableCmd.Parameters.AddWithValue("@Id", note.Id);
+                try
+                {
+                    tableCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+        return RedirectToAction("Home");
+    }
+}
+
