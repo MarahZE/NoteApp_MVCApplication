@@ -1,15 +1,16 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using NoteApp.Models;
+using Microsoft.AspNetCore.Identity;
+using NoteApp.Models.ViewModels;
 
 namespace NoteApp.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly PasswordHasher<Account> _passwordHasher;
 
-    private string userEmail;
 
     public HomeController(ILogger<HomeController> logger)
     {
@@ -30,7 +31,8 @@ public class HomeController : Controller
     {
         if (HttpContext.Session.GetString("IsLogged") == "true")
         {
-            return View();
+            var noteViewModel = GetNoteByUser();
+            return View(noteViewModel);
         }
         else
         {
@@ -70,6 +72,8 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult AddAccount(Account account)
     {
+        // Hash the password
+
         using (SqliteConnection con =
                 new SqliteConnection("Data Source=db.sqlite"))
         {
@@ -131,8 +135,4 @@ public class HomeController : Controller
 
     public IActionResult LogOut()
     {
-        HttpContext.Session.Clear(); // Förstör sessionen
-        return RedirectToAction("Index");
-    }
-}
-
+        HttpContext
