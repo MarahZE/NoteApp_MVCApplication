@@ -186,7 +186,9 @@ public class HomeController : Controller
     }
 
 
-    public IActionResult Delete(Note note)
+
+    [HttpPost]
+    public IActionResult Delete(int id)
     {
 
         using (SqliteConnection con = new SqliteConnection("Data Source=db.sqlite"))
@@ -195,7 +197,7 @@ public class HomeController : Controller
             using (var tableCmd = con.CreateCommand())
             {
                 tableCmd.CommandText = $"DELETE FROM Notes WHERE Id = @Id";
-                tableCmd.Parameters.AddWithValue("@Id", note.Id);
+                tableCmd.Parameters.AddWithValue("@Id", id);
                 try
                 {
                     tableCmd.ExecuteNonQuery();

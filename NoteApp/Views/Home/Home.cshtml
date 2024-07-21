@@ -48,8 +48,8 @@
                     <td>@note.Id</td>
                     <td>@note.Title</td>
                     <td>@note.Text
-                        <form asp-action="Delete" method="post">
-                            <input type="hidden" asp-for="Note.Id" />
+                        <form action="Delete" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@note.Id" />
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                     </td>
