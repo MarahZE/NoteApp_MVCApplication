@@ -2,59 +2,54 @@
     ViewData["Title"] = "Home Page";
 }
 
-
 @model NoteViewModel
-<div>
-    <form asp-action="Insert" id="form-action" method="post" role="form">
-        <div asp-validation-summary="All" class="text-danger"></div>
 
-        <input asp-for="Note.Id" type="hidden">
+<div class="container mt-5">
+    <!-- Note Form -->
+    <div class="row mb-4">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="mb-4">Add a New Note</h2>
+            <form asp-action="Insert" id="form-action" method="post" role="form">
+                <div asp-validation-summary="All" class="text-danger"></div>
 
-        <input asp-for="Note.Email" type="hidden">
+                <input asp-for="Note.Id" type="hidden">
+                <input asp-for="Note.Email" type="hidden">
 
-        <div class="form-group">
-            <label asp-for="Note.Title">Title:</label>
-            <input asp-for="Note.Title" type="text" class="form-control" required>
-            <span asp-validation-for="Note.Title" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="Note.Title">Title:</label>
+                    <input asp-for="Note.Title" type="text" class="form-control" required>
+                    <span asp-validation-for="Note.Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Note.Text">Text:</label>
+                    <textarea asp-for="Note.Text" class="form-control" rows="3" required></textarea>
+                    <span asp-validation-for="Note.Text" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" id="form-button" class="btn btn-primary">Add Note</button>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label asp-for="Note.Text">Text:</label>
-            <input asp-for="Note.Text" type="text" class="form-control" required>
-            <span asp-validation-for="Note.Text" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <button type="submit" id="form-button" class="btn btn-primary">Add Note</button>
-        </div>
-    </form>
-</div>
-
-<div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Text</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var note in Model.Notes)
-            {
-                <tr>
-                    <td>@note.Id</td>
-                    <td>@note.Title</td>
-                    <td>@note.Text
-                        <form action="Delete" method="post" style="display:inline;">
+    <!-- Notes Grid -->
+    <div class="row">
+        @foreach (var note in Model.Notes)
+        {
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@note.Title</h5>
+                        <p class="card-text">@note.Text</p>
+                        <form action="Delete" method="post" class="d-inline">
                             <input type="hidden" name="id" value="@note.Id" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-primary">Delete</button>
                         </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
