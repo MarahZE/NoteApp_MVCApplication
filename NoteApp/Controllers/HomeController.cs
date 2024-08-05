@@ -36,6 +36,7 @@ public class HomeController : Controller
         }
         else
         {
+            TempData["LoginRequired"] = "true";
             return RedirectToAction("Index");
         }
 

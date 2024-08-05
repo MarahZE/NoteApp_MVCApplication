@@ -3,3 +3,14 @@
 
 // Write your JavaScript code.
 
+
+function showLoginAlert() {
+    alert("Du behöver logga in först.");
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var loginRequired = '@TempData["LoginRequired"]';
+    if (loginRequired === "true") {
+        showLoginAlert();
+    }
+});
